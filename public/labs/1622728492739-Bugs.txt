@@ -1,0 +1,49 @@
+	
+	BackEnd for Now.....
+	- update User Appointements ( All Ids ==== 1 )
+	- All Doctor Orders ===> Merge with patient Data. (ticket for abdo)
+	- Delete Orders on pathology and radios .
+	- Upload Result for radio and patho. 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	- limit Time for Session.(ticket for abdo).
+	- Add SecondName in BackEnd in registration. ( ticket for Backend )
+	- Nurse Module Sorting with date and Time. (ticket for backend)===>?????????????
+
+
+
+	- User Info with Patient photo.  
+	- Add order Form ( get labs  or pathology or radios from BackEnd ). ===> ?
+
+	- Labs Choices ===> Same Style. ( Linked Pages ...the same style ) 
+
+	
+
+
+
+	
+
+	
+	
+
+	
+	- Change DataTable + its style. 
+	- Call Api with Token ( Handle in Backend )
+	- (Vist - patientRegistration) Rewrite for the DataGrid and convert it to DataTable.
+
+	- Naming Convension with Date and firstName.
+	- System Admin and Document Manegement ===> ( not used... )
+
+	- Delete Button in patient Appointements ( style ).	=================>Done
+	- pharmacist Registration + CRUD  ( BackEnd and FrontEnd ) =========>Done
+	- Try to make UserName in adding any Record like add appointements.( with pt code) 30 m ===============>Done
+	- Show Result ==> PDF(  ) ====> Done
+
+
+
+
+
+
+	Doing : 
+	- try making dataTable Component
+
