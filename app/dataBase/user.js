@@ -1,5 +1,5 @@
-const express = require('express');
-const mysql = require('mysql');
+const express = require('express')
+const mysql = require('mysql')
 // https://www.phpmyadmin.co/
 // Create connection
 /*
@@ -17,7 +17,7 @@ Port: 3306
 
 These are the username and password to log in to your database and phpMyAdmin
 
-*/ 
+*/
 
 /*
 var connection;
@@ -45,38 +45,38 @@ function handleDisconnect() {
 
 handleDisconnect();
 
-*/ 
-const db2 = mysql.createConnection({
-    host     : 'remotemysql.com',
-    user     : 'CSFcE5yL7Y',
-    password : 'FK8npv2oee',
-    port : '3306',
-    database: 'CSFcE5yL7Y',
-   
-});
-db2.connect((err) => {
-  if(err){
-      throw err;
-  }
-  console.log('MySql Connected2...');
+*/
 
-});
+const db2 = mysql.createConnection({
+  host: 'bors1xaysbbbx0yiipww-mysql.services.clever-cloud.com',
+  user: 'uttntpsvobkaxgyk',
+  password: 'n6dXeYhOfwwt2Wfykfui',
+  database: 'bors1xaysbbbx0yiipww',
+  dialect: 'mysql',
+  port: '3306'
+})
+db2.connect(err => {
+  if (err) {
+    throw err
+  }
+  console.log('MySql Connected2...')
+})
 /*
 //
 the new recorder will check by between start and end date;
-*/ 
-function handleDisconnect() {
+*/
 
-db2.on('error', function(err) {
-  console.log('db error', err);
-  if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-    handleDisconnect();                         // lost due to either server restart, or a
-  } else {  
-    console.log("from err")                                    // connnection idle timeout (the wait_timeout
-    throw err;                                  // server variable configures this)
-  }
-});
-
+function handleDisconnect () {
+  db2.on('error', function (err) {
+    console.log('db error', err)
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      // Connection to the MySQL server is usually
+      handleDisconnect() // lost due to either server restart, or a
+    } else {
+      console.log('from err') // connnection idle timeout (the wait_timeout
+      throw err // server variable configures this)
+    }
+  })
 }
-handleDisconnect();
-module.exports = db2;
+handleDisconnect()
+module.exports = db2

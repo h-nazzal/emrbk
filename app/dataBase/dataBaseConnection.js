@@ -111,16 +111,18 @@ handleDisconnect();
 // handleDisconnect();
 var db2
 var pool = mysql.createPool({
-  HOST: 'bors1xaysbbbx0yiipww-mysql.services.clever-cloud.com',
-  USER: 'uttntpsvobkaxgyk',
-  PASSWORD: 'n6dXeYhOfwwt2Wfykfui',
-  DB: 'bors1xaysbbbx0yiipww',
+  connectionLimit: 5,
+  host: 'bors1xaysbbbx0yiipww-mysql.services.clever-cloud.com',
+  user: 'uttntpsvobkaxgyk',
+  password: 'n6dXeYhOfwwt2Wfykfui',
+  database: 'bors1xaysbbbx0yiipww',
   dialect: 'mysql',
   port: '3306'
 })
 
 pool.getConnection(function (err, connection) {
   if (err) {
+    console.log('======================,', err)
     console.log(err)
     return
     callback(true)
