@@ -1,67 +1,63 @@
-const db = require("../../model");
-const Allergy = db.allergy;
-const Op = db.Sequelize.Op;
-const crypto = require("crypto");
-
+const db = require('../../model')
+const Allergy = db.allergy
+const Op = db.Sequelize.Op
+const crypto = require('crypto')
 
 // Create and Save a new allergy
 exports.create = (req, res) => {
   if (!req.body.name || !req.body.type) {
     res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
+      message: 'Content can not be empty!'
+    })
+    return
   }
-    idCode = crypto.randomBytes(3).toString("hex");
-    console.log(idCode);
+  idCode = crypto.randomBytes(3).toString('hex')
+  console.log(idCode)
   // Create a allergy
   const allergy = {
     name: req.body.name,
     type: req.body.type,
-    idCode:idCode,
-  };
-  console.log(allergy);
+    idCode: idCode
+  }
+  console.log(allergy)
 
   // Save allergy in the database
   Allergy.create(allergy)
     .then(data => {
       res.send({
-        message: "Record has been added successfully"
-      });
+        message: 'Record has been added successfully'
+      })
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the allergy."
-      });
-    });
-};
+          err.message || 'Some error occurred while creating the allergy.'
+      })
+    })
+}
 
 // Retrieve all allergy from the database.
 exports.findAll = (req, res) => {
-
   //var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
   Allergy.findAll({
     where: {
       isDeleted: false
     }
-
   })
     .then(data => {
-      res.send(data);
+      res.send(data)
     })
     .catch(err => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving allergys."
-      });
-    });
-};
+        message: err.message || 'Some error occurred while retrieving allergys.'
+      })
+    })
+}
 
 // Find a single allergy with an id
 exports.findOne = (req, res) => {
-  const ID = req.body.id;
+  const ID = req.body.id
 
   Allergy.findAll({
     where: {
@@ -70,18 +66,32 @@ exports.findOne = (req, res) => {
     }
   })
     .then(data => {
-      res.send(data);
+      res.send(data)
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving allergy with id=" + ID
-      });
-    });
-};
+        message: 'Error retrieving allergy with id=' + ID
+      })
+    })
+} // Find a single allergy with an id
+exports.addPtAllergy = (req, res) => {
+  console.log('hollllaa')
+  let json = req
+  console.log(json)
+  // json
+  // for (var i = 0; i < json.Allergy.length; i++) {
+
+  //    db2.query('INSERT INTO ' + '`pt_allergies`' + '(type,name,status,date,ptid) VALUES(' + '"' + json.Allergy[i].type + '"' + ',' + '"' + json.Allergy[i].name + '"' + ',' + '"' + json.Allergy[i].status + '", "'+json.Allergy[i].date+ '",'+ result["insertId"] + ');', function (err, result2) {
+  //       if (err) {
+  //          console.log(err);
+  //          res.send(err);
+  //       }
+  //    })
+}
 
 // Update a allergy by the id in the request
 exports.update = (req, res) => {
-  const id = req.body.id;
+  const id = req.body.id
 
   Allergy.update(req.body, {
     where: { id: id }
@@ -89,26 +99,23 @@ exports.update = (req, res) => {
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "allergy was updated successfully."
-        });
+          message: 'allergy was updated successfully.'
+        })
       } else {
         res.send({
           message: `Cannot update allergy with id=${id}. Maybe allergy was not found or req.body is empty!`
-        });
+        })
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating allergy with id=" + id
-      });
-    });
-};
+        message: 'Error updating allergy with id=' + id
+      })
+    })
+}
 
 // Delete a allergy with the specified id in the request
 exports.delete = (req, res) => {
-  req.body.isDeleted = true;
-  exports.update(req, res);
-};
-
-
-
+  req.body.isDeleted = true
+  exports.update(req, res)
+}

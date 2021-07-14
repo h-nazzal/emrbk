@@ -79,12 +79,12 @@ module.exports = app => {
         }
       }
     )
-  })
+  }) // this shows mistake in creating the prescreption using the user id
   // select the PD.id so that it could be used when updating the quantity
   router.get('/PrescriptionByPatient/:Pt_id', function (req, res) {
     db.query(
-      `select P.id as'PID',PD.id as 'PDID',P.notes,P.createdAt,D.name,PD.Quantity,PD.Duration,PD.refailCount from Prescriptions P Join Prescription_Drugs PD on P.id = PD.prescription_id
-        Join drugs D on PD.drug_id = D.id Where P.ptId=` + req.params.Pt_id,
+      `SELECT P.id AS 'PID', P.drId, PD.id AS 'PDID', P.notes, P.createdAt, D.name, PD.Quantity, PD.Duration, PD.refailCount, Y.firstName AS drfirstname, Y.lastName AS drlastname FROM Prescriptions P JOIN Prescription_Drugs PD ON P.id = PD.prescription_id JOIN doctors Y ON P.drId = Y.userId JOIN drugs D ON PD.drug_id = D.id WHERE P.ptId =` +
+        req.params.Pt_id,
       function (err, result) {
         if (err) {
           res.status(400)
@@ -101,7 +101,8 @@ module.exports = app => {
               prescription.push({
                 id: record.PID,
                 created_date: record.createdAt,
-                notes: record.notes
+                notes: record.notes,
+                drname: record.drfirstname + ' ' + record.drlastname
               })
             }
           })
@@ -125,6 +126,18 @@ module.exports = app => {
         req.body.drId +
         "')",
       function (err, result) {
+        console.log(
+          'creating prescrition',
+          "Insert Into `Prescriptions`(notes,visit_id,ptId,drId) Values('" +
+            req.body.notes +
+            "','" +
+            req.body.visit_id +
+            "','" +
+            req.body.ptId +
+            "','" +
+            req.body.drId +
+            "')"
+        )
         if (err) {
           res.status(400)
 
@@ -154,6 +167,23 @@ module.exports = app => {
         req.body.drId +
         "')",
       function (err, result) {
+        console.log(
+          "Insert Into `Prescription_Drugs`(Quantity,Duration,drug_id,prescription_id,notes,ptId,drId) Values('" +
+            req.body.Quantity +
+            "','" +
+            req.body.Duration +
+            "','" +
+            req.body.drug_id +
+            "','" +
+            req.body.PId +
+            "','" +
+            req.body.notes +
+            "','" +
+            req.body.ptId +
+            "','" +
+            req.body.drId +
+            "')"
+        )
         if (err) {
           res.status(400)
           res.send({ err: err })
@@ -330,9 +360,12 @@ module.exports = app => {
     )
   })
 
-  router.get('/mydrugs', function (req, res) {
+  router.get('/mydrugs/:ptId', function (req, res) {
+    console.log(req.body)
     db.query(
-      'SELECT PD.id, D.name, PD.Quantity,PD.Duration,PD.createdAt,PD.active FROM Prescription_Drugs as PD JOIN drugs as D on PD.drug_id = D.id ',
+      'SELECT PD.id, D.name, PD.Quantity,PD.Duration,PD.createdAt,PD.active FROM Prescription_Drugs as PD JOIN drugs as D on PD.drug_id = D.id WHERE ptId = ' +
+        req.params.ptId,
+      console.log('by:', req.params.ptId, result),
       function (err, result) {
         if (err) {
           res.status(400)
@@ -343,10 +376,25 @@ module.exports = app => {
       }
     )
   })
-
+  router.post('/dispense_drug', function (req, res) {
+    db.query(
+      'Update Prescription_Drugs set active = 1 , refailCount  = refailCount  - ' +
+        req.body.value +
+        ' where id=' +
+        req.body.id,
+      function (err, result) {
+        if (err) {
+          res.status(400)
+          res.send(err)
+        } else {
+          res.send(result)
+        }
+      }
+    )
+  })
   router.post('/unactive_drug', function (req, res) {
     db.query(
-      'Update Prescription_Drugs set active = 0 where id=' + req.body.id,
+      'Update Prescription_Drugs set active= 0 where id=' + req.body.id,
       function (err, result) {
         if (err) {
           res.status(400)
@@ -360,10 +408,8 @@ module.exports = app => {
 
   router.post('/myPrescriptions', function (req, res) {
     db.query(
-      `SELECT P.id,P.notes,P.createdAt ,PD.id as PDID ,
-        PD.Quantity,PD.Duration,D.name as drugName,PD.notes as PDNotes,PD.createdAt as PDDate
-         from Prescriptions P JOIN Prescription_Drugs PD on P.id = PD.prescription_id
-          JOIN drugs D on PD.drug_id = D.id where P.ptId=` + req.body.ptId,
+      `SELECT P.id AS 'PID', P.drId, PD.id AS 'PDID', P.notes, P.createdAt, D.name, PD.Quantity, PD.Duration, PD.refailCount, Y.firstName AS drfirstname, Y.lastName AS drlastname FROM Prescriptions P JOIN Prescription_Drugs PD ON P.id = PD.prescription_id JOIN doctors Y ON P.drId = Y.userId JOIN drugs D ON PD.drug_id = D.id WHERE P.ptId =` +
+        req.body.ptId,
       function (err, result) {
         if (err) {
           res.status(400)
@@ -379,14 +425,15 @@ module.exports = app => {
                 id: row.id,
                 PNotes: row.notes,
                 PDate: row.createdAt,
+                drname: row.drfirstname + ' ' + row.drlastname,
                 drugs: [
                   {
                     id: row.PDID,
                     Quantity: row.Quantity,
                     Duration: row.Duration,
-                    drug: row.drugName,
-                    notes: row.PDNotes,
-                    date: row.PDDate
+                    drug: row.name,
+                    notes: row.Notes,
+                    refill: row.refailCount
                   }
                 ]
               })
@@ -472,6 +519,28 @@ module.exports = app => {
         }
       }
     )
+  })
+
+  router.post('/addfamilyHistories', function (req, res) {
+    db.query(
+      'INSERT INTO pt_familyHistories (relation , problem, ptId ) Values ( "' +
+        req.body.relation +
+        '",' +
+        req.body.problem +
+        ',"' +
+        req.body.ptId +
+        ' ")',
+      console.log(req.body),
+      function (err, ress) {
+        if (err) {
+          console.log(err)
+          console.log(ress)
+        } else {
+          console.log('added')
+        }
+      }
+    )
+    res.send('Added Successfully')
   })
 
   // router.post('/getSessionById',async function(req,res){

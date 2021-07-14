@@ -2,6 +2,7 @@ const db = require('../../model')
 var db2 = require('../../dataBase/dataBaseConnection')
 const LabOrder = db.labOrder
 const LabFD = db.labFD
+const chemist = db.chemist
 const DR = db.doctor
 const PT = db.pt
 const Op = db.Sequelize.Op
@@ -111,7 +112,7 @@ exports.findByCode = (req, res) => {
 
       console.log(ress.id)
       db2.query(
-        'SELECT l.id ,ls.name as labName, d.firstName as OrderingFirstName , d.lastName as OrderinglastName , p.firstName as PtFirstName ,p.lastName as PtlastName,p.phone, l.comments ,l.status FROM doctors d JOIN labOrders l ON l.drId = d.id JOIN Patients p ON l.ptId = p.id JOIN labs ls on l.labId = ls.id where l.isDeleted = false and l.labFDId IS NULL and  ptId = ' +
+        'SELECT l.id ,l.Date ,ls.name as labName, d.firstName as OrderingFirstName , d.lastName as OrderinglastName , p.firstName as PtFirstName ,p.lastName as PtlastName,p.phone, l.comments ,l.status FROM doctors d JOIN labOrders l ON l.drId = d.id JOIN Patients p ON l.ptId = p.id JOIN labs ls on l.labId = ls.id where l.isDeleted = false and l.labFDId IS NULL and  ptId = ' +
           ress.id,
         function (err, result) {
           if (err) {
@@ -202,6 +203,35 @@ exports.findBylabId = (req, res) => {
     }
   })
     .then(ress => {
+      if (!ress) {
+        chemist
+          .findOne({
+            where: {
+              userId: req.body.labFDId
+            }
+          })
+          .then(ress => {
+            console.log(ress)
+            db2.query(
+              'SELECT d.firstName AS OrderingDrFirstName, d.lastName AS tOrderingDrLastName, Lo.id, Lo.result, Lo.comments, Lo.Date, P.id AS PtID, P.phone, P.firstname, P.secondName, P.lastname, P.address, P.phone, Y.name AS labname FROM labOrders Lo JOIN Patients P ON Lo.ptId = P.id JOIN labs Y ON Lo.labId = Y.id JOIN doctors d ON Lo.drId = d.id WHERE Lo.isDeleted = FALSE AND Lo.labFDId =' +
+                ress.labFDId,
+              function (err, result) {
+                console.log(
+                  'SELECT d.firstName as OrderingDrFirstName , d.lastName as tOrderingDrLastName ,  Lo.id,Lo.result,Lo.comments,P.id as PtID,P.phone,P.firstname,P.secondName,P.lastname,P.address,P.phone from labOrders Lo Join Patients P on Lo.ptId = P.id Join doctors d on Lo.drId = d.id where Lo.isDeleted = false and  Lo.labFDId = ' +
+                    ress.labFDId
+                )
+                if (err) {
+                  console.log('sfsfsfsdf')
+                  console.log(err)
+                  res.status(500).send(err.message)
+                } else {
+                  res.send(result)
+                }
+              }
+            )
+          })
+        return
+      }
       db2.query(
         'SELECT d.firstName as OrderingDrFirstName , d.lastName as tOrderingDrLastName ,  Lo.id,Lo.result,Lo.comments,P.id as PtID,P.phone,P.firstname,P.secondName,P.lastname,P.address,P.phone from labOrders Lo Join Patients P on Lo.ptId = P.id Join doctors d on Lo.drId = d.id where Lo.isDeleted = false and  Lo.labFDId = ' +
           ress.id,
@@ -228,6 +258,29 @@ exports.findResultsBylabId = (req, res) => {
     }
   })
     .then(ress => {
+      if (!ress) {
+        chemist
+          .findOne({
+            where: {
+              userId: req.body.labFDId
+            }
+          })
+          .then(ress => {
+            console.log('woooooooooooooooooooooooooooo')
+            db2.query(
+              'SELECT L.name as labName , d.firstName as OrderingDrFirstName , d.lastName as tOrderingDrLastName ,  Lo.id,Lo.result,Lo.comments,Lo.Date,P.id  as PtID,P.phone,P.firstname,P.secondName,P.lastname,P.address,P.phone from labOrders Lo Join Patients P on Lo.ptId = P.id Join doctors d on Lo.drId = d.id JOIN labs L on Lo.labId = L.id where Lo.result IS NOT NULL and Lo.isDeleted = false and  Lo.labFDId = ' +
+                ress.labFDId,
+              function (err, result) {
+                if (err) {
+                  res.status(500).send(err.message)
+                } else {
+                  res.send(result)
+                }
+              }
+            )
+          })
+        return
+      }
       db2.query(
         'SELECT L.name as labName , d.firstName as OrderingDrFirstName , d.lastName as tOrderingDrLastName ,  Lo.id,Lo.result,Lo.comments,P.id as PtID,P.phone,P.firstname,P.secondName,P.lastname,P.address,P.phone from labOrders Lo Join Patients P on Lo.ptId = P.id Join doctors d on Lo.drId = d.id JOIN labs L on Lo.labId = L.id where Lo.result IS NOT NULL and Lo.isDeleted = false and  Lo.labFDId = ' +
           ress.id,
@@ -306,45 +359,141 @@ exports.findOne = (req, res) => {
 
 // Update a order by the id in the request
 exports.update = (req, res) => {
+  console.log('tryyyyying')
   LabFD.findOne({
     where: {
       userId: req.body.labFDId
     }
-  }).then(ress => {
-    req.body.labFDId = ress.id
+  })
+    .then(
+      ress => {
+        if (!ress) {
+          console.log('failed as fd searching as a chmist')
+          chemist
+            .findOne({
+              where: {
+                userId: req.body.labFDId
+              }
+            })
+            .then(ress => {
+              req.body.labFDId = ress.labFDId
 
-    const ID = req.body.id
-    var dt2 = new Date()
-    dt2 = dt2
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', ' ')
-    req.body.Date = dt2
-    LabOrder.update(
-      {
-        labFDId: req.body.labFDId
+              const ID = req.body.id
+              var dt2 = new Date()
+              dt2 = dt2
+                .toISOString()
+                .slice(0, 19)
+                .replace('T', ' ')
+              req.body.Date = dt2
+              LabOrder.update(
+                {
+                  labFDId: req.body.labFDId
+                },
+                {
+                  where: { id: ID }
+                }
+              )
+                .then(num => {
+                  if (num == 1) {
+                    res.send({
+                      message: 'order was updated successfully.'
+                    })
+                  } else {
+                    res.send({
+                      message: `Cannot update order with id=${id}. Maybe order was not found or req.body is empty!`
+                    })
+                  }
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message: 'Error updating lab order with id=' + id
+                  })
+                })
+            })
+          return
+        }
+        console.log('ress')
+        console.log(ress)
+        req.body.labFDId = ress.id
+
+        const ID = req.body.id
+        var dt2 = new Date()
+        dt2 = dt2
+          .toISOString()
+          .slice(0, 19)
+          .replace('T', ' ')
+        req.body.Date = dt2
+        LabOrder.update(
+          {
+            labFDId: req.body.labFDId
+          },
+          {
+            where: { id: ID }
+          }
+        )
+          .then(num => {
+            if (num == 1) {
+              res.send({
+                message: 'order was updated successfully.'
+              })
+            } else {
+              res.send({
+                message: `Cannot update order with id=${id}. Maybe order was not found or req.body is empty!`
+              })
+            }
+          })
+          .catch(err => {
+            res.status(500).send({
+              message: 'Error updating lab order with id=' + id
+            })
+          })
       },
-      {
-        where: { id: ID }
+      function (ee) {
+        console.log('failed as fd searching as a chmist')
+        chemist
+          .findOne({
+            where: {
+              userId: req.body.labFDId
+            }
+          })
+          .then(ress => {
+            req.body.labFDId = ress.labFDId
+
+            const ID = req.body.id
+            var dt2 = new Date()
+            dt2 = dt2
+              .toISOString()
+              .slice(0, 19)
+              .replace('T', ' ')
+            req.body.Date = dt2
+            LabOrder.update(
+              {
+                labFDId: req.body.labFDId
+              },
+              {
+                where: { id: ID }
+              }
+            )
+              .then(num => {
+                if (num == 1) {
+                  res.send({
+                    message: 'order was updated successfully.'
+                  })
+                } else {
+                  res.send({
+                    message: `Cannot update order with id=${id}. Maybe order was not found or req.body is empty!`
+                  })
+                }
+              })
+              .catch(err => {
+                res.status(500).send({
+                  message: 'Error updating lab order with id=' + id
+                })
+              })
+          })
       }
     )
-      .then(num => {
-        if (num == 1) {
-          res.send({
-            message: 'order was updated successfully.'
-          })
-        } else {
-          res.send({
-            message: `Cannot update order with id=${id}. Maybe order was not found or req.body is empty!`
-          })
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: 'Error updating lab order with id=' + id
-        })
-      })
-  })
+    .catch(e => console.log(e))
 }
 
 // Delete a lab order with the specified id in the request

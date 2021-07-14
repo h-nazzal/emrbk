@@ -302,7 +302,7 @@ exports.getByPtId = (req, res) => {
         var resultt = []
         for (var i = 0; i < result.length; i++) {
           resultt.push({
-            id: result[i]['NID'],
+            id: result[i]['id'],
             systolic: systolic,
             diastolic: diastolic,
             pulse: result[i]['pulse'],

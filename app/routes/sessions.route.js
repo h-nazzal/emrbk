@@ -18,9 +18,14 @@ module.exports = app => {
       date.getMinutes(),
       date.getSeconds()
     )
-    var tomorrow = new Date(date.getTime() - 48 * 60 * 60 * 1000)
+    var yesterday = new Date(date.getTime() - 24 * 60 * 60 * 1000)
+    var tomorrow = new Date(date.getTime() + 24 * 60 * 60 * 1000)
 
     tomorrow = tomorrow
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ')
+    yesterday = yesterday
       .toISOString()
       .slice(0, 19)
       .replace('T', ' ')
@@ -31,8 +36,8 @@ module.exports = app => {
 
     console.log('asssss')
     var sql =
-      "SELECT * FROM `visits` WHERE `createdAt` BETWEEN '" +
-      dt +
+      "SELECT V.* , P.firstName,P.secondName,P.lastName,P.phone,P.address FROM visits V JOIN Patients P on V.ptId = P.id WHERE V.isDeleted = 0 and V.createdAt BETWEEN '" +
+      yesterday +
       "' and  '" +
       tomorrow +
       "'"

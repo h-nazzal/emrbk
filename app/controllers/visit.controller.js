@@ -370,11 +370,17 @@ exports.pt_allergies = (req, res) => {
 }
 exports.pt_familyHistories = (req, res) => {
   db2.query(
-    'SELECT * from Patients pt Join pt_familyHistories v  on pt.id = v.ptid   where pt.id = ' +
+    'SELECT v.relation t.name v.notes from Patients pt Join diseases t on t.id=v.problem Join pt_familyHistories v  on pt.id = v.ptid   where pt.id = ' +
       req.body.ptId,
     function (err, result) {
       if (err) {
-        res.status(500).send(err.message)
+        res.status(500).send(err.message),
+          console.log(
+            'SELECT * FROM Patients pt JOIN pt_familyHistories v ON pt.id = v.ptId JOIN diseases t ON v.problem= t.id WHERE pt.id ="' +
+              req.body.ptId +
+              '"'
+          ),
+          console.log('reason:', err.message)
       } else {
         res.send(result)
       }
