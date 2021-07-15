@@ -344,7 +344,7 @@ exports.pt_surgery_histories = (req, res) => {
 }
 exports.pt_interventions = (req, res) => {
   db2.query(
-    'SELECT * from Patients pt Join pt_interventions v  on pt.id = v.ptid   where pt.id = ' +
+    'SELECT v.notes,v.name,v.createdAt from Patients pt Join pt_interventions v  on pt.id = v.ptid   where pt.id = ' +
       req.body.ptId,
     function (err, result) {
       if (err) {
@@ -355,6 +355,27 @@ exports.pt_interventions = (req, res) => {
     }
   )
 }
+exports.addPt_interventions = (req, res) => {
+  db2.query(
+    'INSERT INTO `pt_interventions`(`notes` , `name`,  `ptId`) VALUES ("' +
+      req.body.notes +
+      '","' +
+      req.body.name +
+      '",' +
+      req.body.ptId +
+      ')',
+    console.log(req.body),
+    function (err, result) {
+      if (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+      } else {
+        res.send(result)
+      }
+    }
+  )
+}
+
 exports.pt_allergies = (req, res) => {
   db2.query(
     'SELECT * from Patients pt Join pt_allergies v  on pt.id = v.ptid   where pt.id = ' +

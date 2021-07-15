@@ -4,13 +4,14 @@ var router = require('express').Router()
 var db = require('../dataBase/dataBaseConnection')
 const visistController = require('../controllers/visit.controller')
 const fs = require('fs')
-
+var db2 = require('../dataBase/dataBaseConnection')
 var pdf = ''
 module.exports = app => {
   router.post('/pt_familyHistories', visistController.pt_familyHistories)
   router.post('/onGoingProblem', visistController.findOnGoingProblem)
   router.post('/pt_allergies', visistController.pt_allergies)
   router.post('/pt_interventions', visistController.pt_interventions)
+  router.post('/addpt_interventions', visistController.addPt_interventions)
   router.post('/pt_surgery_histories', visistController.pt_surgery_histories)
   router.post('/addVisit', visistController.create)
   router.post('/getPatientVisits', visistController.getPatientVisits)
@@ -144,6 +145,38 @@ module.exports = app => {
           res.send(err)
         } else {
           res.send(result)
+        }
+      }
+    )
+  })
+  router.post('/addsurgerycb', function (req, res) {
+    db2.query(
+      'SELECT name from surgeries where id =' + req.body.name,
+
+      function (err, result) {
+        if (err) {
+          console.log(err)
+        } else {
+          let x = result[0].name
+          db2.query(
+            'Insert Into pt_surgery_histories (name,notes,ptId) VALUES( "' +
+              x +
+              '","' +
+              req.body.notes +
+              '",' +
+              req.body.ptId +
+              ')',
+
+            console.log(x),
+
+            function (err, result) {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log(result)
+              }
+            }
+          )
         }
       }
     )
