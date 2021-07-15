@@ -2,6 +2,7 @@ const db = require('../../model')
 const Allergy = db.allergy
 const Op = db.Sequelize.Op
 const crypto = require('crypto')
+var db2 = require('../../dataBase/dataBaseConnection')
 
 // Create and Save a new allergy
 exports.create = (req, res) => {
@@ -76,7 +77,8 @@ exports.findOne = (req, res) => {
 } // Find a single allergy with an id
 exports.addPtAllergy = (req, res) => {
   console.log('hollllaa')
-  let json = req
+  let json = req.body
+
   console.log(json)
   // json
   // for (var i = 0; i < json.Allergy.length; i++) {
@@ -88,6 +90,51 @@ exports.addPtAllergy = (req, res) => {
   //       }
   //    })
 }
+exports.addOneAllergy = (req, res) => {
+  console.log('hollllaa')
+  let a = req.body
+  db2.query(
+    'INSERT INTO ' +
+      '`pt_allergies`' +
+      '(name,status,date,ptid) VALUES ("' +
+      a.name +
+      '","' +
+      a.status +
+      '","' +
+      a.date +
+      '",' +
+      a.ptId +
+      ')',
+    'INSERT INTO ' +
+      '`pt_allergies`' +
+      '(type),SELECT type from allergies  WHERE name=' +
+      a.name,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+//       if (err) {
+//          console.log(err);
+//          res.send(err);
+//       }
+//    })
+// json
+// for (var i = 0; i < json.Allergy.length; i++) {
+
+//    db2.query('INSERT INTO ' + '`pt_allergies`' + '(type,name,status,date,ptid) VALUES(' + '"' + json.Allergy[i].type + '"' + ',' + '"' + json.Allergy[i].name + '"' + ',' + '"' + json.Allergy[i].status + '", "'+json.Allergy[i].date+ '",'+ result["insertId"] + ');', function (err, result2) {
+//       if (err) {
+//          console.log(err);
+//          res.send(err);
+//       }
+//    })
 
 // Update a allergy by the id in the request
 exports.update = (req, res) => {

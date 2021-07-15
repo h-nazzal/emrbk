@@ -370,7 +370,7 @@ exports.pt_allergies = (req, res) => {
 }
 exports.pt_familyHistories = (req, res) => {
   db2.query(
-    'SELECT v.relation t.name v.notes from Patients pt Join diseases t on t.id=v.problem Join pt_familyHistories v  on pt.id = v.ptid   where pt.id = ' +
+    'SELECT * from pt_familyHistories FM Join diseases D on D.id= FM.problem where FM.ptId=' +
       req.body.ptId,
     function (err, result) {
       if (err) {

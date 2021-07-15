@@ -8,10 +8,12 @@ module.exports = app => {
   router.post('/addPT', pt.create)
   router.post('/findPt', pt.find)
   router.post('/getAllergyById', pt.getAllergyById)
+  router.post('/getAllergyById', pt.getAllergyByIdCB)
   router.post('/getProblemsById', pt.getProblemsById)
 
   // Retrieve all problems
   router.post('/addPtAllergy', Allergy.addPtAllergy)
+  router.post('/addOneAllergy', Allergy.addOneAllergy)
 
   // Retrieve a single Allergy with id
   //router.post("/getById", Allergy.findOne);

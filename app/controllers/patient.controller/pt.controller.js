@@ -1,92 +1,209 @@
-const db = require("../../model");
-const PT = db.pt;
-const History = db.ptProblem;
-const Allergy = db.ptAllergy;
-const Surgey = db.ptSurgery;
-const Family = db.familyHistory;
-const Invest = db.inverven;
+const db = require('../../model')
+const PT = db.pt
+const History = db.ptProblem
+const Allergy = db.ptAllergy
+const Surgey = db.ptSurgery
+const Family = db.familyHistory
+const Invest = db.inverven
 const USER = db.users
-const Op = db.Sequelize.Op;
-var db2 = require("../../dataBase/dataBaseConnection");
-
-
+const Op = db.Sequelize.Op
+var db2 = require('../../dataBase/dataBaseConnection')
 
 exports.create = (req, res) => {
-    var result = JSON.stringify(req.body);
-    var json = JSON.parse(result);
-    db2.query('select * from `users` where userName = ' +'"'+json.userName+'"',function(errr,resu){
-    if(errr){
-       console.log("errrrrrrrroororoororo",errr);
-       res.send("error");
-    }else{
+  var result = JSON.stringify(req.body)
+  var json = JSON.parse(result)
+  db2.query(
+    'select * from `users` where userName = ' + '"' + json.userName + '"',
+    function (errr, resu) {
+      if (errr) {
+        console.log('errrrrrrrroororoororo', errr)
+        res.send('error')
+      } else {
         //add gender
-        console.log("In elseeeeeee");
-        console.log(resu[0]["id"])
-        var userId = resu[0]["id"];
-        ptCode =  Math.floor(Math.random() * parseInt(resu[0]["id"]) * 1000 );
-       console.log("ressssssssss",resu[0]["id"]);
- 
-       db2.query('INSERT INTO ' + '`Patients`' + '(ptCode,phone,address,birthDate,maritalStatus,bloodGroup,firstName,lastName,secondName,gender,userId) VALUES(' +ptCode+ ',"' + json.phone + '"' + ',' + '"' + json.address + '"' + ','   + '"' + json.birthDate + '"' + ',' +
-       '"' + json.status + '"' + ',' + '"' + json.BloodGroup + '"' + ',' + '"' + json.firstName + '"' + ',' + '"' + json.lastName + '" ,'+'"'+json.secondName+'" , "'+ json.gender+'" ,' +parseInt(userId)+ ');', function (err, result) {
-          if (err) {
-             console.log("err=>>" + err);
-             res.send(err);
-          } else {
-             console.log(result)
-             for (var i = 0; i < json.Allergy.length; i++) {
-                
-                db2.query('INSERT INTO ' + '`pt_allergies`' + '(type,name,status,date,ptid) VALUES(' + '"' + json.Allergy[i].type + '"' + ',' + '"' + json.Allergy[i].name + '"' + ',' + '"' + json.Allergy[i].status + '", "'+json.Allergy[i].date+ '",'+ result["insertId"] + ');', function (err, result2) {
-                   if (err) {
-                      console.log(err);
-                      res.send(err);
-                   }
-                })
-             }
- 
-             for (var i = 0; i < json.familyHistory.length; i++) {
-                db2.query('INSERT INTO ' + '`pt_familyHistories`' + '(relation,problem,notes,ptid) VALUES(' + '"' + json.familyHistory[i].relation + '"' + ',' + '"' + json.familyHistory[i].problem + '"' +
-                    ',' + '"' + "json.familyHistory[i].note" + '",' + result["insertId"] + ');', function (err, result2) {
-                  if (err) {
-                         console.log(err);
-                         res.send(err);
-                      }
-                   })
-             }
-             for (var i = 0; i < json.surgeries.length; i++) {
-                db2.query('INSERT INTO ' + '`pt_surgery_histories`' + '(name,date,notes,ptid) VALUES(' + '"' + json.surgeries[i].name + '"' + ',' + '"' + json.surgeries[i].date
-                   + '",' + '"' + json.surgeries[i].note + '",' + result["insertId"] + ');', function (err, result3) {
-                      if (err) {
-                         console.log(err);
-                         res.send(err);
-                      }
-                   })
-             }
-             for (var i = 0; i < json.onGoingProblems.length; i++) {
-                db2.query('INSERT INTO ' + '`pt_problems`' + '(problem,date,ptid) VALUES(' + '"' + json.onGoingProblems[i].problem + '"' + ',' + '"' + json.onGoingProblems[i].date
-                   + '"'+ ',' + result["insertId"] + ');', function (err, result3) {
-                      if (err) {
-                         console.log(err);
-                         res.send(err);
-                      }
-                   })
-             }
-             for (var i = 0; i < json.Interventions.length; i++) {
-                db2.query('INSERT INTO ' + '`pt_interventions`' + '(name,notes,ptid) VALUES(' + '"' + json.Interventions[i].name  + 
-                    '",' + '"' + json.Interventions[i].note + '",' + result["insertId"] + ');', function (err, result3) {
-                      if (err) {
-                         console.log(err);
-                         res.send(err);
-                      }
-                   })
-             }
-             res.send("done");
- 
-          }
-       })
-    }   
-    })
+        console.log('In elseeeeeee')
+        console.log(resu[0]['id'])
+        var userId = resu[0]['id']
+        ptCode = Math.floor(Math.random() * parseInt(resu[0]['id']) * 1000)
+        console.log('ressssssssss', resu[0]['id'])
 
- /*
+        db2.query(
+          'INSERT INTO ' +
+            '`Patients`' +
+            '(ptCode,phone,address,birthDate,maritalStatus,bloodGroup,firstName,lastName,secondName,gender,userId) VALUES(' +
+            ptCode +
+            ',"' +
+            json.phone +
+            '"' +
+            ',' +
+            '"' +
+            json.address +
+            '"' +
+            ',' +
+            '"' +
+            json.birthDate +
+            '"' +
+            ',' +
+            '"' +
+            json.status +
+            '"' +
+            ',' +
+            '"' +
+            json.BloodGroup +
+            '"' +
+            ',' +
+            '"' +
+            json.firstName +
+            '"' +
+            ',' +
+            '"' +
+            json.lastName +
+            '" ,' +
+            '"' +
+            json.secondName +
+            '" , "' +
+            json.gender +
+            '" ,' +
+            parseInt(userId) +
+            ');',
+          function (err, result) {
+            if (err) {
+              console.log('err=>>' + err)
+              res.send(err)
+            } else {
+              console.log(result)
+              for (var i = 0; i < json.Allergy.length; i++) {
+                db2.query(
+                  'INSERT INTO ' +
+                    '`pt_allergies`' +
+                    '(type,name,status,date,ptid) VALUES(' +
+                    '"' +
+                    json.Allergy[i].type +
+                    '"' +
+                    ',' +
+                    '"' +
+                    json.Allergy[i].name +
+                    '"' +
+                    ',' +
+                    '"' +
+                    json.Allergy[i].status +
+                    '", "' +
+                    json.Allergy[i].date +
+                    '",' +
+                    result['insertId'] +
+                    ');',
+                  function (err, result2) {
+                    if (err) {
+                      console.log(err)
+                      res.send(err)
+                    }
+                  }
+                )
+              }
+
+              for (var i = 0; i < json.familyHistory.length; i++) {
+                db2.query(
+                  'INSERT INTO ' +
+                    '`pt_familyHistories`' +
+                    '(relation,problem,notes,ptid) VALUES(' +
+                    '"' +
+                    json.familyHistory[i].relation +
+                    '"' +
+                    ',' +
+                    '"' +
+                    json.familyHistory[i].problem +
+                    '"' +
+                    ',' +
+                    '"' +
+                    'json.familyHistory[i].note' +
+                    '",' +
+                    result['insertId'] +
+                    ');',
+                  function (err, result2) {
+                    if (err) {
+                      console.log(err)
+                      res.send(err)
+                    }
+                  }
+                )
+              }
+              for (var i = 0; i < json.surgeries.length; i++) {
+                db2.query(
+                  'INSERT INTO ' +
+                    '`pt_surgery_histories`' +
+                    '(name,date,notes,ptid) VALUES(' +
+                    '"' +
+                    json.surgeries[i].name +
+                    '"' +
+                    ',' +
+                    '"' +
+                    json.surgeries[i].date +
+                    '",' +
+                    '"' +
+                    json.surgeries[i].note +
+                    '",' +
+                    result['insertId'] +
+                    ');',
+                  function (err, result3) {
+                    if (err) {
+                      console.log(err)
+                      res.send(err)
+                    }
+                  }
+                )
+              }
+              for (var i = 0; i < json.onGoingProblems.length; i++) {
+                db2.query(
+                  'INSERT INTO ' +
+                    '`pt_problems`' +
+                    '(problem,date,ptid) VALUES(' +
+                    '"' +
+                    json.onGoingProblems[i].problem +
+                    '"' +
+                    ',' +
+                    '"' +
+                    json.onGoingProblems[i].date +
+                    '"' +
+                    ',' +
+                    result['insertId'] +
+                    ');',
+                  function (err, result3) {
+                    if (err) {
+                      console.log(err)
+                      res.send(err)
+                    }
+                  }
+                )
+              }
+              for (var i = 0; i < json.Interventions.length; i++) {
+                db2.query(
+                  'INSERT INTO ' +
+                    '`pt_interventions`' +
+                    '(name,notes,ptid) VALUES(' +
+                    '"' +
+                    json.Interventions[i].name +
+                    '",' +
+                    '"' +
+                    json.Interventions[i].note +
+                    '",' +
+                    result['insertId'] +
+                    ');',
+                  function (err, result3) {
+                    if (err) {
+                      console.log(err)
+                      res.send(err)
+                    }
+                  }
+                )
+              }
+              res.send('done')
+            }
+          }
+        )
+      }
+    }
+  )
+
+  /*
     if (!req.body || !req.body.firstName || !req.body.lastName || !req.body.secondName) {
         res.status(400).send({
             message: "Content can not be empty!"
@@ -284,52 +401,68 @@ exports.create = (req, res) => {
 
     }*/
 }
-    exports.find =  (req, res) => {
-        PT.findAll({
-            where: {
-                isDeleted: false,
-                id:req.body.id,
-            }
-        }).then(date=>{
-           // console.log(date);
-            res.send(date)
-        }).catch(err=>{
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving ."
-            });
-        })
+exports.find = (req, res) => {
+  PT.findAll({
+    where: {
+      isDeleted: false,
+      id: req.body.id
     }
-    exports.getAllergyById = (req,res)=>{
-        Allergy.findAll({
-            where:{
-                isDeleted: false,
-                ptId:req.body.ptId,
-            }
-        }).then(date=>{
-            res.send(date)
-        })
-        .catch(err=>{
-            res.status(500).send({
-                message:
-                err.message || "some error in get Allergy"
-            })
-        })
+  })
+    .then(date => {
+      // console.log(date);
+      res.send(date)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving .'
+      })
+    })
+}
+exports.getAllergyById = (req, res) => {
+  Allergy.findAll({
+    where: {
+      isDeleted: false,
+      ptId: req.body.ptId
     }
-    exports.getProblemsById = (req,res)=>{
-        History.findAll({
-            where:{
-                isDeleted:false,
-                ptId:req.body.ptId
-            }
-        }).then(data=>{
-            res.send(data)
-        }).catch(err=>{
-            res.status(500).send({
-                message:
-                    err.message || "some error in get problems"
-            })
-        })
+  })
+    .then(date => {
+      res.send(date)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || 'some error in get Allergy'
+      })
+    })
+}
+exports.getAllergyByIdCB = (req, res) => {
+  db2.query(
+    'SELECT *  FROM pt_allergies pt Join allergies a on a.name = pt.name where isDeleted= 0 ptId =' +
+      req.body.ptId,
+    function (err, result) {
+      if (err) {
+        conslo.log(result)
+        res.status(500).send(err.message)
+      } else {
+        conslo.log(result)
+        res.send(result)
+      }
     }
+  )
+}
 
-
+exports.getProblemsById = (req, res) => {
+  History.findAll({
+    where: {
+      isDeleted: false,
+      ptId: req.body.ptId
+    }
+  })
+    .then(data => {
+      res.send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || 'some error in get problems'
+      })
+    })
+}
