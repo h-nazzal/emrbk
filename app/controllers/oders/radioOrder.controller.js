@@ -222,7 +222,7 @@ exports.findByDrId = (req, res) => {
     }
   }).then(ress => {
     db2.query(
-      'SELECT rs.name as radioName ,Lo.createdAt, Lo.id,Lo.result,Lo.comments,P.id as PtID,P.firstname,P.lastname,P.address,P.phone from radioOrders Lo Join Patients P on Lo.ptId = P.id JOIN radios rs on Lo.radioId = rs.id where Lo.isDeleted = false and  Lo.drId = ' +
+      'SELECT rs.name as radioName ,Lo.createdAt, Lo.date,Lo.id,Lo.result,Lo.comments,P.id as PtID,P.firstname,P.lastname,P.address,P.phone from radioOrders Lo Join Patients P on Lo.ptId = P.id JOIN radios rs on Lo.radioId = rs.id where Lo.isDeleted = false and  Lo.drId = ' +
         ress.id,
       function (err, result) {
         if (err) {

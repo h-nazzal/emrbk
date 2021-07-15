@@ -7,8 +7,9 @@ module.exports = app => {
   // Create a new Allergy
   router.post('/addPT', pt.create)
   router.post('/findPt', pt.find)
+  router.get('/findByAdmin', pt.findByAdmin)
   router.post('/getAllergyById', pt.getAllergyById)
-  router.post('/getAllergyById', pt.getAllergyByIdCB)
+  router.post('/getAllergyByIdCB', pt.getAllergyByIdCB)
   router.post('/getProblemsById', pt.getProblemsById)
 
   // Retrieve all problems

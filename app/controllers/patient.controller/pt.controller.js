@@ -418,6 +418,23 @@ exports.find = (req, res) => {
       })
     })
 }
+exports.findAll = (req, res) => {
+  PT.findAll({
+    where: {
+      isDeleted: false,
+      id: req.body.id
+    }
+  })
+    .then(date => {
+      // console.log(date);
+      res.send(date)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving .'
+      })
+    })
+}
 exports.getAllergyById = (req, res) => {
   Allergy.findAll({
     where: {
@@ -436,14 +453,14 @@ exports.getAllergyById = (req, res) => {
 }
 exports.getAllergyByIdCB = (req, res) => {
   db2.query(
-    'SELECT *  FROM pt_allergies pt Join allergies a on a.name = pt.name where isDeleted= 0 ptId =' +
+    'SELECT pt.name, pt.name, pt.date, pt.status, a.type FROM pt_allergies pt JOIN allergies a ON a.name = pt.name WHERE pt.isDeleted = 0 AND pt.ptId=' +
       req.body.ptId,
     function (err, result) {
       if (err) {
-        conslo.log(result)
+        console.log(err)
         res.status(500).send(err.message)
       } else {
-        conslo.log(result)
+        console.log(result)
         res.send(result)
       }
     }
@@ -465,4 +482,18 @@ exports.getProblemsById = (req, res) => {
         message: err.message || 'some error in get problems'
       })
     })
+}
+exports.findByAdmin = (req, res) => {
+  db2.query(
+    'SELECT PT.ptCode, PT.phone, PT.firstName, PT.lastName, PT.secondName, U.userName, U.Email FROM Patients AS PT JOIN users AS U ON U.id = PT.userId',
+    function (err, result) {
+      if (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+      } else {
+        console.log(result)
+        res.send(result)
+      }
+    }
+  )
 }

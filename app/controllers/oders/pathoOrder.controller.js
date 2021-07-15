@@ -309,7 +309,7 @@ exports.findByDrId = (req, res) => {
     }
   }).then(ress => {
     db2.query(
-      'SELECT ps.name as pathoName ,Lo.createdAt, Lo.id,Lo.result,Lo.comments,P.id as PtID,P.firstname,P.lastname,P.address,P.phone from pathoOrders Lo Join Patients P on Lo.ptId = P.id JOIN pathos ps on Lo.pathoId = ps.id where Lo.isDeleted = false and  Lo.drId = ' +
+      'SELECT ps.name as pathoName ,Lo.createdAt,Lo.Date, Lo.id,Lo.result,Lo.comments,P.id as PtID,P.firstname,P.lastname,P.address,P.phone from pathoOrders Lo Join Patients P on Lo.ptId = P.id JOIN pathos ps on Lo.pathoId = ps.id where Lo.isDeleted = false and  Lo.drId = ' +
         ress.id,
       function (err, result) {
         if (err) {
