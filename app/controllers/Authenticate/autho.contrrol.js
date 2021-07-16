@@ -112,15 +112,18 @@ exports.login = (req, res) => {
                 }
               })
               .then(result2 => {
-                console.log('asaaa')
+                console.log('asaaa', result[0].image)
                 if (result2.length === 0) {
                   user['userId'] = result[0].id
+                  user['image'] = result[0].image
                   res.send(user)
                   return
                 }
                 if (result2[0].role == 0) {
                   user['userId'] = result[0].id
                   user['role'] = result2[0].role
+                  user['image'] = result[0].image
+
                   res.send(user)
                   return
                 }
@@ -135,6 +138,8 @@ exports.login = (req, res) => {
                       console.log('sada', user['labid'])
                       user['role'] = result2[0].role
                       user['userId'] = result[0].id
+                      user['image'] = result[0].image
+
                       res.send(user)
                     })
                     .catch(err => {
@@ -152,6 +157,8 @@ exports.login = (req, res) => {
                       user['pathoId'] = result3.pathoId
                       user['role'] = result2[0].role
                       user['userId'] = result[0].id
+                      user['image'] = result[0].image
+
                       res.send(user)
                     })
                     .catch(err => {
@@ -169,6 +176,8 @@ exports.login = (req, res) => {
                       user['radioId'] = result3.radioId
                       user['role'] = result2[0].role
                       user['userId'] = result[0].id
+                      user['image'] = result[0].image
+
                       res.send(user)
                     })
                     .catch(err => {
@@ -180,6 +189,8 @@ exports.login = (req, res) => {
                   console.log(result2.length + 'asdsad')
                   user['userId'] = result[0].id
                   user['role'] = result2[0].role
+                  user['image'] = result[0].image
+
                   res.send(user)
                 }
               })
