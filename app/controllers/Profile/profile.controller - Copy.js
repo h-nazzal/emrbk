@@ -12,16 +12,15 @@ exports.uploadPhoto = (req, res) => {
     }
   })
     .then(data => {
-      console.log(' second step', req.imageString)
       if (
         fs.existsSync(
           path.join(__dirname, '../../../public/images/' + data.image)
         )
       ) {
-        // fs.unlinkSync( path.join(__dirname, '../../../public/images/' + data.image)
-        console.log('enable unlink in profile control')
+        fs.unlinkSync(
+          path.join(__dirname, '../../../public/images/' + data.image)
+        )
       }
-
       User.update(
         {
           image: req.imageString
@@ -33,7 +32,6 @@ exports.uploadPhoto = (req, res) => {
         }
       )
         .then(result => {
-          console.log('the string', req.imageString)
           res.send({ imgPath: req.imageString })
         })
         .catch(err => {
@@ -41,7 +39,6 @@ exports.uploadPhoto = (req, res) => {
         })
     })
     .catch(err => {
-      console.log(err)
       res.send('erro in find match')
     })
 }
