@@ -330,10 +330,11 @@ exports.findOnGoingProblem = (req, res) => {
 }
 exports.pt_surgery_histories = (req, res) => {
   db2.query(
-    'SELECT * from Patients pt Join pt_surgery_histories v  on pt.id = v.ptid   where pt.id = ' +
+    'SELECT v.date,v.name,v.id,v.notes,v.createdAt from Patients pt Join pt_surgery_histories v  on pt.id = v.ptid where v.isDeleted=0 AND pt.id = ' +
       req.body.ptId,
     function (err, result) {
       if (err) {
+        console.log(err)
         res.status(500).send(err.message)
       } else {
         res.send(result)
@@ -344,7 +345,7 @@ exports.pt_surgery_histories = (req, res) => {
 }
 exports.pt_interventions = (req, res) => {
   db2.query(
-    'SELECT v.notes,v.name,v.createdAt from Patients pt Join pt_interventions v  on pt.id = v.ptid   where pt.id = ' +
+    'SELECT v.notes,v.name,v.createdAt AS date ,v.id from Patients pt Join pt_interventions v  on pt.id = v.ptid   where v.isDeleted =0 AND pt.id = ' +
       req.body.ptId,
     function (err, result) {
       if (err) {
@@ -391,17 +392,11 @@ exports.pt_allergies = (req, res) => {
 }
 exports.pt_familyHistories = (req, res) => {
   db2.query(
-    'SELECT * from pt_familyHistories FM Join diseases D on D.id= FM.problem where FM.ptId=' +
+    'SELECT D.name,FM.id,FM.relation from pt_familyHistories FM Join diseases D on D.id= FM.problem WHERE FM.isDeleted = 0 AND FM.ptId=' +
       req.body.ptId,
     function (err, result) {
       if (err) {
-        res.status(500).send(err.message),
-          console.log(
-            'SELECT * FROM Patients pt JOIN pt_familyHistories v ON pt.id = v.ptId JOIN diseases t ON v.problem= t.id WHERE pt.id ="' +
-              req.body.ptId +
-              '"'
-          ),
-          console.log('reason:', err.message)
+        res.status(500).send(err.message), console.log('reason:', err.message)
       } else {
         res.send(result)
       }

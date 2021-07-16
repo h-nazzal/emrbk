@@ -453,7 +453,7 @@ exports.getAllergyById = (req, res) => {
 }
 exports.getAllergyByIdCB = (req, res) => {
   db2.query(
-    'SELECT pt.name, pt.name, pt.date, pt.status, a.type FROM pt_allergies pt JOIN allergies a ON a.name = pt.name WHERE pt.isDeleted = 0 AND pt.ptId=' +
+    'SELECT pt.id,pt.name, pt.name, pt.date, pt.status, a.type FROM pt_allergies pt JOIN allergies a ON a.name = pt.name WHERE pt.isDeleted = 0 AND pt.ptId=' +
       req.body.ptId,
     function (err, result) {
       if (err) {
@@ -475,6 +475,7 @@ exports.getProblemsById = (req, res) => {
     }
   })
     .then(data => {
+      console.log(data)
       res.send(data)
     })
     .catch(err => {
@@ -493,6 +494,126 @@ exports.findByAdmin = (req, res) => {
       } else {
         console.log(result)
         res.send(result)
+      }
+    }
+  )
+}
+exports.deleteOnePtAllergy = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_allergies SET isDeleted=1 WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+exports.resolveOnePtAllergy = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_allergies SET status="Resolved" WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+exports.deleteOnePtProblem = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_problems SET isDeleted=1 WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+exports.resolveOnePtProblem = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_problems SET status="Resolved" WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+
+exports.deleteOnept_familyHistories = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_familyHistories SET isDeleted=1 WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+exports.deleteOnept_surgery_histories = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_surgery_histories SET isDeleted=1 WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
+      }
+    }
+  )
+}
+exports.deleteOnept_interventions = (req, res) => {
+  console.log('hollllaa')
+
+  db2.query(
+    'UPDATE pt_interventions  SET isDeleted=1 WHERE id =' + req.body.id,
+
+    function (err, result) {
+      if (err) {
+        res.status(500).send(err.message)
+        console.log(err)
+      } else {
+        res.send(result)
+        console.log('we did ', result)
       }
     }
   )

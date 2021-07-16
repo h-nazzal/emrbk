@@ -553,6 +553,21 @@ module.exports = app => {
       }
     )
   })
+  router.post('/getProblemsCD', function (req, res) {
+    db.query('SELECT * from pt_problems where ptId=' + req.body.ptId, function (
+      err,
+      result
+    ) {
+      if (err) {
+        console.log(err)
+        res.status(400)
+        res.send(err)
+      } else {
+        res.send(result)
+        console.log(result)
+      }
+    })
+  })
 
   router.post('/addfamilyHistories', function (req, res) {
     db.query(
@@ -575,7 +590,38 @@ module.exports = app => {
     )
     res.send('Added Successfully')
   })
+  router.post('/addproblemCB', function (req, res) {
+    db2.query(
+      'SELECT name from diseases where id =' + req.body.problem,
 
+      function (err, result) {
+        if (err) {
+          console.log(req.body.problem, err)
+        } else {
+          let x = result[0].name
+          db2.query(
+            'Insert Into pt_problems (problem,date,ptId) VALUES( "' +
+              x +
+              '","' +
+              req.body.date +
+              '",' +
+              req.body.ptId +
+              ')',
+
+            console.log(x),
+
+            function (err, result) {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log(result)
+              }
+            }
+          )
+        }
+      }
+    )
+  })
   // router.post('/getSessionById',async function(req,res){
   //     var sql = "SELECT * from `doctor` where id = " + req.body.id ;
   //     db.query(sql, function (err, result) {

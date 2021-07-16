@@ -121,6 +121,7 @@ exports.addOneAllergy = (req, res) => {
     }
   )
 }
+
 //       if (err) {
 //          console.log(err);
 //          res.send(err);
